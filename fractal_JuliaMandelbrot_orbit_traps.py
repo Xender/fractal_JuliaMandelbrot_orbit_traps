@@ -44,6 +44,15 @@ def mandel(x, y, max_iters):
 	return iter_julia_mandel(z, c, max_iters)
 
 
+@numba.jit
+def julia(x, y, max_iters):
+	# c = 0j
+	c = -0.73+0.19j
+	z = complex(x,y)
+
+	return iter_julia_mandel(z, c, max_iters)
+
+
 @numba.jit(nopython=True)
 def create_fractal(min_x, max_x, min_y, max_y, image, iters):
 	height = image.shape[0]
@@ -57,7 +66,7 @@ def create_fractal(min_x, max_x, min_y, max_y, image, iters):
 		for y in range(height):
 			imag = min_y + y * pixel_size_y
 
-			color = mandel(real, imag, iters)
+			color = julia(real, imag, iters)
 			image[y, x] = color
 
 	return image
