@@ -20,16 +20,13 @@ def squared_magnitude(c):
 	return c.real * c.real + c.imag * c.imag
 
 
-@numba.jit
-def mandel(x, y, max_iters):
+@numba.jit(nopython=True)
+def iter_julia_mandel(z, c, max_iters):
 	"""
 	Given the real and imaginary parts of a complex number,
-	determine if it is a candidate for membership in the Mandelbrot
+	determine if it is a candidate for membership in the Mandelbrot/Julia
 	set given a fixed number of iterations.
 	"""
-
-	c = complex(x,y)
-	z = 0j
 
 	for i in range(max_iters):
 		z = z*z + c
@@ -37,6 +34,14 @@ def mandel(x, y, max_iters):
 			return 255 * i // max_iters
 
 	return 255
+
+
+@numba.jit
+def mandel(x, y, max_iters):
+	c = complex(x,y)
+	z = 0j
+
+	return iter_julia_mandel(z, c, max_iters)
 
 
 @numba.jit(nopython=True)
