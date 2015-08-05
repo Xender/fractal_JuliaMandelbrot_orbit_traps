@@ -73,12 +73,12 @@ def create_fractal(min_x, max_x, min_y, max_y, image, iters):
 
 
 def main():
-	width, height = map(int, sys.argv[1:])
+	width, height, iters = map(int, sys.argv[1:])
 
 	print("started")
 
 	image = np.zeros((height, width), dtype=np.uint8)
-	create_fractal(-2.0, 1.0, -1.0, 1.0, image, 20)
+	create_fractal(-2.0, 2.0, -1.0, 1.0, image, iters)
 
 	pylab.imshow(image)
 	pylab.gray()
