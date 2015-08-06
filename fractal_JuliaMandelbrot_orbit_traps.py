@@ -20,20 +20,34 @@ def squared_magnitude(c):
 	return c.real * c.real + c.imag * c.imag
 
 
+# @numba.jit(nopython=True)
+# def iter_julia_mandel(z, c):
+# 	while True:
+# 		# yield z
+# 		z = z*z + c
+# 		yield z
+
+
 @numba.jit(nopython=True)
-def iter_julia_mandel(z, c, max_iters):
-	"""
-	Given the real and imaginary parts of a complex number,
-	determine if it is a candidate for membership in the Mandelbrot/Julia
-	set given a fixed number of iterations.
-	"""
-
-	for i in range(max_iters):
+def iter_julia_mandel_until_escapes(z, c):
+	while True:
+		# yield z
 		z = z*z + c
-		if squared_magnitude(z) >= 4:
-			return 255 * i // max_iters
+		# yield z
 
-	return 255
+		if squared_magnitude(z) >= 4:
+			break
+
+		yield z
+
+
+@numba.jit(nopython=True)
+def julia_mandel_iternum(z, c, max_iters):
+	for i, _ in enumerate(iter_julia_mandel_until_escapes(z, c)):
+		if i >= max_iters:
+			break
+
+	return i
 
 
 @numba.jit(nopython=True)
@@ -41,7 +55,7 @@ def mandel(x, y, max_iters):
 	c = complex(x,y)
 	z = 0j
 
-	return iter_julia_mandel(z, c, max_iters)
+	return julia_mandel_iternum(z, c, max_iters) * 255 // max_iters
 
 
 @numba.jit(nopython=True)
@@ -50,7 +64,7 @@ def julia(x, y, max_iters):
 	c = -0.73+0.19j
 	z = complex(x,y)
 
-	return iter_julia_mandel(z, c, max_iters)
+	return julia_mandel_iternum(z, c, max_iters) * 255 // max_iters
 
 
 @numba.jit(nopython=True)
