@@ -36,7 +36,7 @@ def iter_julia_mandel(z, c, max_iters):
 	return 255
 
 
-@numba.jit
+@numba.jit(nopython=True)
 def mandel(x, y, max_iters):
 	c = complex(x,y)
 	z = 0j
@@ -44,7 +44,7 @@ def mandel(x, y, max_iters):
 	return iter_julia_mandel(z, c, max_iters)
 
 
-@numba.jit
+@numba.jit(nopython=True)
 def julia(x, y, max_iters):
 	# c = 0j
 	c = -0.73+0.19j
