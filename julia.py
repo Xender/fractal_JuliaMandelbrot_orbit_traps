@@ -1,7 +1,12 @@
+import math
+
 import numba
 
 
 # Helpers
+
+INF = float('inf')
+
 
 @numba.jit(nopython=True)
 def squared_magnitude(c):
@@ -38,3 +43,17 @@ def iternum_until_escapes(z, c, max_iters):
 			break
 
 	return i
+
+
+@numba.jit(nopython=True)
+def trap(z, c, max_iters):
+	f = INF
+
+	for z in iter_until_escapes(z, c):
+		f = min(f, squared_magnitude(z))
+
+	# return f
+	# return math.log(f)
+	# return math.log(f)/16.0
+	return math.exp(-5*f)
+	# return 1.0+math.log(f)/16.0

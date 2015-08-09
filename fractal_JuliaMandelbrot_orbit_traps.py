@@ -65,6 +65,19 @@ def fractal_point(type_, x, y, max_iters):
 
 
 @numba.jit(nopython=True)
+def fractal_trap_point(type_, x, y, max_iters):
+	if type_ == MANDEL:
+		c = complex(x,y)
+		z = 0j
+	elif type_ == JULIA:
+		# c = 0j
+		c = -0.73+0.19j
+		z = complex(x,y)
+
+	return julia.trap(z, c, max_iters) * 255
+
+
+@numba.jit(nopython=True)
 def render_fractal(type_, min_x, max_x, min_y, max_y, image, iters):
 	height = image.shape[0]
 	width = image.shape[1]
@@ -77,7 +90,8 @@ def render_fractal(type_, min_x, max_x, min_y, max_y, image, iters):
 		for y in range(height):
 			imag = min_y + y * pixel_size_y
 
-			color = fractal_point(type_, real, imag, iters)
+			# color = fractal_point(type_, real, imag, iters)
+			color = fractal_trap_point(type_, real, imag, iters)
 			image[y, x] = color
 
 	return image
